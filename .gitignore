@@ -2,7 +2,9 @@
 .idea
 
 #environment data
-.env
+Gitkins-config.yaml
+Gitkins
+Gitkins_linux_amd64
 
 # Created by .ignore support plugin (hsz.mobi)
 ### Go template

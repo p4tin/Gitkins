@@ -1,23 +1,45 @@
 package config
 
 import (
-	"github.com/joho/godotenv"
 	"log"
-	"os"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"flag"
 )
 
 var (
-	GithubToken string
-	JenkinsUsername string
-	JenkinsApiToken string
+	Version = "0.0.1"
 )
 
+type Job struct {
+	GithubAccount      string 	 `yaml:"githubAccount"`
+	GithubApiToken     string 	 `yaml:"githubApiToken"`
+	GithubRepository   string 	 `yaml:"githubRepository"`
+	JenkinsJob         string 	 `yaml:"jenkinsJob"`
+	JenkinsUrl         string 	 `yaml:"jenkinsUrl"`
+	JenkinsUser        string 	 `yaml:"jenkinsUser"`
+	JenkinsApiToken    string 	 `yaml:"jenkinsApiToken"`
+}
+
+type configStruct struct {
+	Port 		string   `yaml:"port"`
+	Debug		bool	 `yaml:"debug"`
+	Watches 	[]Job	 `yaml:"watches"`
+}
+
+var Config configStruct
+
 func init() {
-	err := godotenv.Load()
+	configFile := flag.String("config", "./Gitkins-config.yaml", "Config file")
+	flag.Parse()
+
+	dat, err := ioutil.ReadFile(*configFile)
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		log.Println("Could not load yaml config file.")
 	}
-	GithubToken = os.Getenv("GITHUBTOKEN")
-	JenkinsUsername = os.Getenv("JENKINSUSERNAME")
-	JenkinsApiToken = os.Getenv("JENKINSAPITOKEN")
+
+	err = yaml.Unmarshal(dat, &Config)
+	if err != nil {
+		log.Fatalf("error: %v", err)
+	}
 }

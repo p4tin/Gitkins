@@ -5,3 +5,7 @@ It is planned to go into use at Urban Outfitters to perform continous integratio
 
 All help is appreciated and PRs welcome, please fork the repo and submit PRs with explanations as to what you want to do.
 
+```
+docker pull pafortin/gitkins:latest
+docker run -d --name gitkins -p 8081:8081 pafortin/gitkins
+```

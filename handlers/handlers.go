@@ -2,55 +2,62 @@ package handlers
 
 import (
 	"net/http"
-	"github.com/yosida95/golang-jenkins"
-	"fmt"
-	"strconv"
-	"time"
 	"log"
 	"encoding/json"
 
 	"github.com/google/go-github/github"
+	"github.com/p4tin/Gitkins/config"
+	"io"
+	"github.com/p4tin/Gitkins/clients"
 )
 
+type HealthInfo struct {
+	Version 		string	 	`json:"version,omitempty"`
+	JenkinsUrl      	string 	 	`json:"jenkinsUrl,omitempty"`
+	JenkinsUser     	string 	 	`json:"jenkinsUser,omitempty"`
+	Watches 		[]config.Job 	`json:"watches,omitempty"`
+}
+
+func init() {
+
+}
+
+func HealthEventHandler(w http.ResponseWriter, r *http.Request) {
+	info := HealthInfo{
+		Version: config.Version,
+		Watches:  config.Config.Watches,
+	}
+	b, err := json.MarshalIndent(info, "", "    ")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	io.WriteString(w, string(b))
+}
+
+/*
+
+ 	Github Event Headers:
+ 		- X-GitHub-Event == PullRequestEvent
+ 		- X-GitHub-Delivery == GUID of event
+ 		- X-Hub-Signature == HMAC of the event body
+
+ */
 func GitEventHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Message: %+v\n", r.Body)
-	v := new(github.PullRequest)
-	json.NewDecoder(r.Body).Decode(v)
+	event_type := r.Header.Get("X-GitHub-Event")
 
-	if v.Number != nil {
-		pr, _, err := client.PullRequests.Get("pfortin-urbn", "hooktesting", *v.Number)
-		if err != nil {
-			panic(err)
+	switch(event_type){
+	case "pull_request":
+		pr_event := new(github.PullRequestEvent)
+		json.NewDecoder(r.Body).Decode(pr_event)
+
+		if config.Config.Debug {
+			log.Printf("Event Type: %s, Created by: %s\n", event_type, pr_event.Sender.Login)
+			log.Printf("Message: %s\n", r.Body)
 		}
-		if *pr.State == "open" {
-			log.Println(*pr.State)
-			status1 := &github.RepoStatus{State: &pending, TargetURL: &targetUrl, Description: &pendingDesc, Context: &appName}
-			client.Repositories.CreateStatus("pfortin-urbn", "hooktesting", *pr.Head.SHA, status1)
-			log.Println(pr)
 
-			jauth := &gojenkins.Auth{ApiToken: jenkinsApiToken, Username: jenkinsUsername}
-			jenkins := gojenkins.NewJenkins(jauth, jenkinsBaseUrl)
-			job, err := jenkins.GetJob("PaulTestJob")
-			if err != nil {
-				log.Printf("Jenkins ERROR: %+v\n", err)
-			} else {
-				fmt.Printf("%s\n", job)
-				params := url.Values{
-					"PR": []string{strconv.Itoa(*v.Number)},
-					"SHA": []string{"test1"},
-				}
-				status := jenkins.Build(job, params)
-				log.Printf("Status: %+v\n", status)
-			}
-
-
-			time.Sleep(10 * time.Second)
-			status2 := &github.RepoStatus{State: &success, TargetURL: &targetUrl, Description: &successDesc, Context: &appName}
-			client.Repositories.CreateStatus("pfortin-urbn", "hooktesting", *pr.Head.SHA, status2)
-		} else {
-			log.Printf("PR event but not open state. (%s)", *pr.State)
-		}
-	} else {
-		log.Printf("Hook sent event that was not a PR - %+v\n", v)
+		clients.ProcessPullRequest(*pr_event)
+	default:
+		log.Printf("Event %s not supported yet.\n", event_type)
 	}
 }
