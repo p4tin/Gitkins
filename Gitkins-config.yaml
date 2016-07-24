@@ -1,8 +1,0 @@
-jenkinsUrl  : http://localhost:12345/
-jenkinsUser : fortinp1
-watches: [
-    watch:
-      - gitaccount  : urbn
-        repository  : UrbnCat
-        jenkinsJob  : PaulTest1
-]
