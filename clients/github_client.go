@@ -42,15 +42,17 @@ func ProcessPullRequest(pr_evt github.PullRequestEvent) {
 	tc := oauth2.NewClient(oauth2.NoContext, ts)
 	client := github.NewClient(tc)
 
-	if *pr_evt.PullRequest.State == "open" || *pr_evt.PullRequest.State == "reopen" {
+	if *pr_evt.PullRequest.State == "open" {
 		status1 := &github.RepoStatus{State: &pending, TargetURL: &targetUrl, Description: &pendingDesc, Context: &appName}
 		client.Repositories.CreateStatus(*pr_evt.PullRequest.Base.User.Login, *pr_evt.PullRequest.Base.Repo.Name, *pr_evt.PullRequest.Head.SHA, status1)
 
 
 		s := RunJobByName(config.Config.Watches[watch].JenkinsJob, *pr_evt.Number, watch)
 
+		log.Println("Completed job...")
+
 		if s == true {
-			log.Println("Retruning Success")
+			log.Println("Returning Success")
 			status2 := &github.RepoStatus{State: &success, TargetURL: &targetUrl, Description: &successDesc, Context: &appName}
 			client.Repositories.CreateStatus(*pr_evt.PullRequest.Base.User.Login, *pr_evt.PullRequest.Base.Repo.Name, *pr_evt.PullRequest.Head.SHA, status2)
 		} else {
