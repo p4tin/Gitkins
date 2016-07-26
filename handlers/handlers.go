@@ -46,18 +46,18 @@ func HealthEventHandler(w http.ResponseWriter, r *http.Request) {
 func GitEventHandler(w http.ResponseWriter, r *http.Request) {
 	event_type := r.Header.Get("X-GitHub-Event")
 
-	switch(event_type){
-	case "pull_request":
+	if event_type == "pull_request" {
 		pr_event := new(github.PullRequestEvent)
 		json.NewDecoder(r.Body).Decode(pr_event)
 
 		if config.Config.Debug {
-			log.Printf("Event Type: %s, Created by: %s\n", event_type, pr_event.Sender.Login)
+			log.Printf("Event Type: %s, Created by: %s\n", event_type, pr_event.PullRequest.Base.User.Login)
 			log.Printf("Message: %s\n", r.Body)
 		}
 
-		clients.ProcessPullRequest(*pr_event)
-	default:
+		go clients.ProcessPullRequest(*pr_event)
+		log.Println("Handler exiting...")
+	} else {
 		log.Printf("Event %s not supported yet.\n", event_type)
 	}
 }

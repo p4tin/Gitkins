@@ -48,7 +48,8 @@ func RunJobByName(name string, id int, watch int) bool {
 				return false
 			}
 		}
-		time.Sleep(500 * time.Millisecond)
+		log.Println("Task is running still....")
+		time.Sleep(1000 * time.Millisecond)
 	}
 	b, err := job.GetLastBuild();
 	if err != nil {
