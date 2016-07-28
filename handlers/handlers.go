@@ -1,21 +1,21 @@
 package handlers
 
 import (
-	"net/http"
-	"log"
 	"encoding/json"
+	"log"
+	"net/http"
 
 	"github.com/google/go-github/github"
+	"github.com/p4tin/Gitkins/clients"
 	"github.com/p4tin/Gitkins/config"
 	"io"
-	"github.com/p4tin/Gitkins/clients"
 )
 
 type HealthInfo struct {
-	Version 		string	 	`json:"version,omitempty"`
-	JenkinsUrl      	string 	 	`json:"jenkinsUrl,omitempty"`
-	JenkinsUser     	string 	 	`json:"jenkinsUser,omitempty"`
-	Watches 		[]config.Job 	`json:"watches,omitempty"`
+	Version     string       `json:"version,omitempty"`
+	JenkinsUrl  string       `json:"jenkinsUrl,omitempty"`
+	JenkinsUser string       `json:"jenkinsUser,omitempty"`
+	Watches     []config.Job `json:"watches,omitempty"`
 }
 
 func init() {
@@ -25,7 +25,7 @@ func init() {
 func HealthEventHandler(w http.ResponseWriter, r *http.Request) {
 	info := HealthInfo{
 		Version: config.Version,
-		Watches:  config.Config.Watches,
+		Watches: config.Config.Watches,
 	}
 	b, err := json.MarshalIndent(info, "", "    ")
 	if err != nil {
@@ -37,12 +37,12 @@ func HealthEventHandler(w http.ResponseWriter, r *http.Request) {
 
 /*
 
- 	Github Event Headers:
- 		- X-GitHub-Event == PullRequestEvent
- 		- X-GitHub-Delivery == GUID of event
- 		- X-Hub-Signature == HMAC of the event body
+	Github Event Headers:
+		- X-GitHub-Event == PullRequestEvent
+		- X-GitHub-Delivery == GUID of event
+		- X-Hub-Signature == HMAC of the event body
 
- */
+*/
 func GitEventHandler(w http.ResponseWriter, r *http.Request) {
 	event_type := r.Header.Get("X-GitHub-Event")
 

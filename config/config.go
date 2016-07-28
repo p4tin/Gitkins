@@ -1,10 +1,10 @@
 package config
 
 import (
-	"log"
+	"flag"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
-	"flag"
+	"log"
 )
 
 var (
@@ -12,19 +12,19 @@ var (
 )
 
 type Job struct {
-	GithubAccount      string 	 `yaml:"githubAccount"`
-	GithubApiToken     string 	 `yaml:"githubApiToken"`
-	GithubRepository   string 	 `yaml:"githubRepository"`
-	JenkinsJob         string 	 `yaml:"jenkinsJob"`
-	JenkinsUrl         string 	 `yaml:"jenkinsUrl"`
-	JenkinsUser        string 	 `yaml:"jenkinsUser"`
-	JenkinsApiToken    string 	 `yaml:"jenkinsApiToken"`
+	GithubAccount    string `yaml:"githubAccount"`
+	GithubApiToken   string `yaml:"githubApiToken"`
+	GithubRepository string `yaml:"githubRepository"`
+	JenkinsJob       string `yaml:"jenkinsJob"`
+	JenkinsUrl       string `yaml:"jenkinsUrl"`
+	JenkinsUser      string `yaml:"jenkinsUser"`
+	JenkinsApiToken  string `yaml:"jenkinsApiToken"`
 }
 
 type configStruct struct {
-	Port 		string   `yaml:"port"`
-	Debug		bool	 `yaml:"debug"`
-	Watches 	[]Job	 `yaml:"watches"`
+	Port    string `yaml:"port"`
+	Debug   bool   `yaml:"debug"`
+	Watches []Job  `yaml:"watches"`
 }
 
 var Config configStruct

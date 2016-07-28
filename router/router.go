@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/p4tin/Gitkins/handlers"
 	"github.com/p4tin/Gitkins/config"
+	"github.com/p4tin/Gitkins/handlers"
 )
 
 func Server() {
@@ -15,5 +15,5 @@ func Server() {
 	//ngrok http -subdomain="urbn-ci" 8081
 	log.Println("Listening at: http://0.0.0.0:" + config.Config.Port)
 	log.Println("Health Check: http://0.0.0.0:" + config.Config.Port + "/health")
-	log.Fatal(http.ListenAndServe("0.0.0.0:" + config.Config.Port, nil))
+	log.Fatal(http.ListenAndServe("0.0.0.0:"+config.Config.Port, nil))
 }
