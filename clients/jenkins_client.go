@@ -1,8 +1,8 @@
 package clients
 
 import (
-	"log"
 	"github.com/bndr/gojenkins"
+	"log"
 	"strconv"
 
 	"github.com/p4tin/Gitkins/config"
@@ -24,9 +24,9 @@ func RunJobByName(name string, id int, watch int) bool {
 		log.Printf("Job %s not found\n", name)
 		return false
 	}
-	params := map[string]string {
-		"PR": strconv.Itoa(id),
-		"URL":   "Test1",
+	params := map[string]string{
+		"PR":  strconv.Itoa(id),
+		"URL": "Test1",
 	}
 	stat, err := job.InvokeSimple(params)
 	if err != nil {
@@ -51,7 +51,7 @@ func RunJobByName(name string, id int, watch int) bool {
 		log.Println("Task is running still....")
 		time.Sleep(1000 * time.Millisecond)
 	}
-	b, err := job.GetLastBuild();
+	b, err := job.GetLastBuild()
 	if err != nil {
 		log.Println("Could not get the last build's status")
 		return false
