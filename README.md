@@ -9,7 +9,7 @@ All help is appreciated and PRs welcome, please fork the repo and submit PRs wit
 You need to:
  - Create a jenkins user and api that has access to run the jobs you want
  - Create a github api token from the user that will be able to recieve events and send statuses for the repos you want
- - See example config fiel below for other options that are needed.
+ - See example config file below for other options that are needed.
  - You also need to create the hooks you want to receive events from (perhaps in a later version I will create/use programmatically created hooks)
 
 ## Docker Run

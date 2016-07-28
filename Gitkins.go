@@ -1,14 +1,13 @@
 package main
 
 import (
-        "log"
+	"fmt"
 	"github.com/p4tin/Gitkins/config"
 	"github.com/p4tin/Gitkins/router"
-	"fmt"
+	"log"
 
 	"encoding/json"
 )
-
 
 func main() {
 	log.Printf("Welcome to Gitkins %s\n", config.Version)
